@@ -1,6 +1,7 @@
 package com.example.feedback4.actividades
 
-import com.example.feedback4.NovelaAdapter
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -9,9 +10,11 @@ import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.feedback4.NovelaAdapter
 import com.example.feedback4.R
 import com.example.feedback4.baseDeDatos.NovelaDatabaseHelper
 import com.example.feedback4.dataClasses.Novela
+import com.example.feedback4.widgets.NovelasFavoritasWidget
 
 class MainActivity : AppCompatActivity() {
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
@@ -36,34 +39,39 @@ class MainActivity : AppCompatActivity() {
         adapter = NovelaAdapter(this, mutableListOf())
         listViewNovelas.adapter = adapter
 
-        // Configura el clic en el elemento de la lista para ver detalles
+        // Configurar el clic en el elemento de la lista para ver detalles
         listViewNovelas.setOnItemClickListener { _, _, position, _ ->
             val novela = adapter.getItem(position) as Novela
+
+            // Obtener las reseñas de la base de datos para la novela específica
+            val resenas = novelaDbHelper.obtenerResenasPorTitulo(novela.titulo)
+
             val intent = Intent(this, DetallesNovelaActivity::class.java).apply {
                 putExtra("titulo", novela.titulo)
                 putExtra("autor", novela.autor)
                 putExtra("anio", novela.anioPublicacion)
                 putExtra("sinopsis", novela.sinopsis)
                 putExtra("esFavorita", novela.esFavorita)
+                putStringArrayListExtra("reseñas", ArrayList(resenas))
             }
             startActivityForResult(intent, REQUEST_CODE_DETALLES)
         }
 
         mostrarNovelas()
 
-        //Botón para agregar novelas
+        // Botón para agregar novelas
         findViewById<Button>(R.id.btnAgregarNovela).setOnClickListener {
             val intent = Intent(this, AgregarNovelaActivity::class.java)
             startActivity(intent)
         }
 
-        //Botón para ir a la pantalla de configuración
+        // Botón para ir a la pantalla de configuración
         findViewById<ImageButton>(R.id.btnConfiguracion).setOnClickListener {
             val intent = Intent(this, ConfiguracionActivity::class.java)
             startActivity(intent)
         }
 
-        //Botón para cerrar sesión
+        // Botón para cerrar sesión
         findViewById<ImageButton>(R.id.btnLogout).setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -82,6 +90,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun actualizarWidgetFavoritos() {
+        val intent = Intent(this, NovelasFavoritasWidget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = AppWidgetManager.getInstance(application)
+            .getAppWidgetIds(ComponentName(application, NovelasFavoritasWidget::class.java))
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        sendBroadcast(intent)
+    }
+
     // Actualizar la lista de novelas si cambia el estado de favorito en DetallesNovelaActivity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -89,6 +106,7 @@ class MainActivity : AppCompatActivity() {
             val favoritoActualizado = data?.getBooleanExtra("favorito_actualizado", false) ?: false
             if (favoritoActualizado) {
                 mostrarNovelas()  // Recarga la lista de novelas
+                actualizarWidgetFavoritos() // Muestra los Widgets
             }
         }
     }

@@ -41,7 +41,16 @@
             android:layout_marginBottom="8dp"/>
 
         <TextView
-            android:id="@+id/tvResenas"
+            android:id="@+id/tvResenasTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reseñas:"
+            android:textSize="18sp"
+            android:paddingTop="16dp"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@+id/listViewResenas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColor"

@@ -47,7 +47,8 @@
             android:background="?attr/selectableItemBackground"
             android:contentDescription="Configuración"
             android:src="@drawable/ic_settings"
-            tools:ignore="TouchTargetSizeCheck" />
+            tools:ignore="TouchTargetSizeCheck"
+            android:textColor="?android:attr/textColor"/>
 
         <ImageButton
             android:id="@+id/btnLogout"
@@ -56,6 +57,7 @@
             android:background="?attr/selectableItemBackground"
             android:contentDescription="Cerrar sesión"
             android:src="@drawable/ic_user"
-            tools:ignore="TouchTargetSizeCheck" />
+            tools:ignore="TouchTargetSizeCheck"
+            android:textColor="?android:attr/textColor"/>
     </LinearLayout>
 </LinearLayout>

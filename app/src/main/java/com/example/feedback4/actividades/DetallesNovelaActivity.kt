@@ -1,13 +1,17 @@
 package com.example.feedback4.actividades
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.feedback4.widgets.NovelasFavoritasWidget
 import com.example.feedback4.R
 import com.example.feedback4.baseDeDatos.UsuarioDatabaseHelper
 import com.example.feedback4.baseDeDatos.NovelaDatabaseHelper
@@ -17,6 +21,8 @@ class DetallesNovelaActivity : AppCompatActivity() {
     private lateinit var textViewAutor: TextView
     private lateinit var textViewAnio: TextView
     private lateinit var textViewSinopsis: TextView
+    private lateinit var textViewResenasTitulo: TextView // TextView para el título "Reseñas:"
+    private lateinit var listViewResenas: ListView
     private lateinit var btnMarcarFavorito: Button
     private lateinit var btnVolver: Button
     private lateinit var btnEliminarNovela: Button
@@ -25,6 +31,7 @@ class DetallesNovelaActivity : AppCompatActivity() {
     private lateinit var usuarioDbHelper: UsuarioDatabaseHelper
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var adapter: ArrayAdapter<String>
 
     private lateinit var titulo: String
     private lateinit var autor: String
@@ -47,6 +54,8 @@ class DetallesNovelaActivity : AppCompatActivity() {
         textViewAutor = findViewById(R.id.tvAutor)
         textViewAnio = findViewById(R.id.tvAnio)
         textViewSinopsis = findViewById(R.id.tvSinopsis)
+        textViewResenasTitulo = findViewById(R.id.tvResenasTitulo) // Inicializar el TextView de "Reseñas:"
+        listViewResenas = findViewById(R.id.listViewResenas)
         btnMarcarFavorito = findViewById(R.id.btnMarcarFavorito)
         btnVolver = findViewById(R.id.btnVolver)
         btnEliminarNovela = findViewById(R.id.btnEliminarNovela)
@@ -59,8 +68,17 @@ class DetallesNovelaActivity : AppCompatActivity() {
         sinopsis = intent.getStringExtra("sinopsis") ?: ""
         esFavorita = intent.getBooleanExtra("esFavorita", false)
 
-        // Log para depurar el año recibido
-        Log.d("DetallesNovela", "Año recibido: $anio")
+        // Cargar las reseñas desde la base de datos
+        val resenas = novelaDbHelper.obtenerResenasPorTitulo(titulo)
+
+        // Mostrar el título "Reseñas:" solo si hay reseñas
+        if (resenas.isNotEmpty()) {
+            textViewResenasTitulo.visibility = TextView.VISIBLE
+        }
+
+        // Configurar el adaptador para las reseñas
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, resenas)
+        listViewResenas.adapter = adapter
 
         // Mostrar los detalles de la novela
         mostrarDetallesNovela()
@@ -87,7 +105,7 @@ class DetallesNovelaActivity : AppCompatActivity() {
             eliminarNovela()
         }
 
-        //Configurar el botón para agregar reseñas
+        // Configurar el botón para agregar reseñas
         btnAgregarResena.setOnClickListener {
             val intent = Intent(this, AgregarResenaActivity::class.java)
             intent.putExtra("tituloNovela", titulo)
@@ -103,6 +121,15 @@ class DetallesNovelaActivity : AppCompatActivity() {
         actualizarEstadoFavorito()
     }
 
+    private fun actualizarWidgetFavoritos() {
+        val intent = Intent(this, NovelasFavoritasWidget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = AppWidgetManager.getInstance(application)
+            .getAppWidgetIds(ComponentName(application, NovelasFavoritasWidget::class.java))
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        sendBroadcast(intent)
+    }
+
     private fun actualizarEstadoFavorito() {
         // Actualiza el botón para reflejar el estado de favorito
         btnMarcarFavorito.text = if (esFavorita) {
@@ -116,6 +143,7 @@ class DetallesNovelaActivity : AppCompatActivity() {
         if (!actualizado) {
             Toast.makeText(this, "Error al actualizar favorito", Toast.LENGTH_SHORT).show()
         }
+        actualizarWidgetFavoritos()
     }
 
     private fun eliminarNovela() {

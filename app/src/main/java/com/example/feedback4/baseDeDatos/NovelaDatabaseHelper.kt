@@ -100,6 +100,29 @@ class NovelaDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABAS
         return rowsUpdated > 0
     }
 
+    // Obtener novelas favoritas
+    fun obtenerNovelasFavoritas(): List<Novela> {
+        val novelas = mutableListOf<Novela>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_NOVELAS WHERE esFavorita = 1", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val novela = Novela(
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITULO)),
+                    cursor.getString(cursor.getColumnIndexOrThrow("autor")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow("anioPublicacion")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("sinopsis")),
+                    true
+                )
+                novelas.add(novela)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return novelas
+    }
+
     fun agregarResena(titulo: String, resena: String): Boolean {
         val db = writableDatabase
         val contentValues = ContentValues().apply {
@@ -109,5 +132,30 @@ class NovelaDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABAS
         val result = db.insert("resenas", null, contentValues)
         db.close()
         return result != -1L
+    }
+
+    fun obtenerResenasPorTitulo(tituloNovela: String): List<String> {
+        val resenas = mutableListOf<String>()
+        val db = this.readableDatabase
+
+        val cursor = db.query(
+            "resenas",
+            arrayOf("resena"),
+            "titulo = ?",
+            arrayOf(tituloNovela),
+            null, null, null
+        )
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val contenidoResena = cursor.getString(cursor.getColumnIndexOrThrow("resena"))
+                resenas.add(contenidoResena)
+            } while (cursor.moveToNext())
+        }
+
+        cursor?.close()
+        db.close()
+
+        return resenas
     }
 }

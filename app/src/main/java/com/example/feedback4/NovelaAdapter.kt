@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import com.example.feedback4.R
 import com.example.feedback4.actividades.DetallesNovelaActivity
 import com.example.feedback4.dataClasses.Novela
 
@@ -24,18 +23,21 @@ class NovelaAdapter(
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_novela, parent, false)
 
         val tvTitulo = view.findViewById<TextView>(R.id.tvTitulo)
+        val tvEstrella = view.findViewById<TextView>(R.id.tvEstrella)  // Cambiar a TextView
         val tvAutor = view.findViewById<TextView>(R.id.tvAutor)
 
-        // Configura el título con subrayado y color amarillo si es favorita
+        // Configura el título y visibilidad de la estrella si es favorita
         if (novela?.esFavorita == true) {
             val spannableTitle = SpannableString(novela.titulo).apply {
                 setSpan(UnderlineSpan(), 0, novela.titulo.length, 0)
             }
             tvTitulo.text = spannableTitle
-            tvTitulo.setTextColor(Color.MAGENTA)  // Color magenta para el título de novelas favoritas
+            tvTitulo.setTextColor(Color.MAGENTA)
+            tvEstrella.visibility = View.VISIBLE  // Muestra la estrella
         } else {
             tvTitulo.text = novela?.titulo
-            tvTitulo.setTextColor(Color.BLACK)  // Color predeterminado para novelas no favoritas
+            tvTitulo.setTextColor(Color.BLACK)
+            tvEstrella.visibility = View.GONE  // Oculta la estrella
         }
 
         tvAutor.text = novela?.autor
