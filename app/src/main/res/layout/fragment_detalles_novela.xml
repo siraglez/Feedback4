@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="?android:attr/colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Título: "
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColor" />
+
+        <TextView
+            android:id="@+id/tvAutor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Autor: "
+            android:textSize="18sp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColor" />
+
+        <TextView
+            android:id="@+id/tvAnio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Año de Publicación: "
+            android:textSize="18sp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColor" />
+
+        <TextView
+            android:id="@+id/tvSinopsis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sinopsis: "
+            android:textSize="18sp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reseñas:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColor" />
+
+        <ListView
+            android:id="@+id/listViewResenas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="8dp" />
+
+        <Button
+            android:id="@+id/btnAgregarResena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Reseña"
+            android:backgroundTint="?android:attr/colorPrimaryDark"
+            android:textColor="?android:attr/textColor"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnMarcarFavorito"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Marcar como Favorito"
+            android:backgroundTint="?android:attr/colorPrimary"
+            android:textColor="?android:attr/textColor"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+</ScrollView>

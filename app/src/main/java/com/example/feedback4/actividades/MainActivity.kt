@@ -1,123 +1,62 @@
 package com.example.feedback4.actividades
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ListView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.feedback4.NovelaAdapter
 import com.example.feedback4.R
 import com.example.feedback4.baseDeDatos.NovelaDatabaseHelper
 import com.example.feedback4.dataClasses.Novela
-import com.example.feedback4.widgets.NovelasFavoritasWidget
+import com.example.feedback4.fragments.AgregarNovelaFragment
+import com.example.feedback4.fragments.AgregarResenaFragment
+import com.example.feedback4.fragments.DetallesNovelaFragment
+import com.example.feedback4.fragments.ListaNovelasFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ListaNovelasFragment.OnNovelaSelectedListener {
+
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
-    private lateinit var adapter: NovelaAdapter
-    private lateinit var listViewNovelas: ListView
-    private lateinit var sharedPreferences: SharedPreferences
-
-    companion object {
-        private const val REQUEST_CODE_DETALLES = 1
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        sharedPreferences = getSharedPreferences("UsuarioPreferences", MODE_PRIVATE)
-        aplicarTema()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         novelaDbHelper = NovelaDatabaseHelper(this)
-        listViewNovelas = findViewById(R.id.listViewNovelas)
 
-        adapter = NovelaAdapter(this, mutableListOf())
-        listViewNovelas.adapter = adapter
-
-        // Configurar el clic en el elemento de la lista para ver detalles
-        listViewNovelas.setOnItemClickListener { _, _, position, _ ->
-            val novela = adapter.getItem(position) as Novela
-
-            // Obtener las reseñas de la base de datos para la novela específica
-            val resenas = novelaDbHelper.obtenerResenasPorTitulo(novela.titulo)
-
-            val intent = Intent(this, DetallesNovelaActivity::class.java).apply {
-                putExtra("titulo", novela.titulo)
-                putExtra("autor", novela.autor)
-                putExtra("anio", novela.anioPublicacion)
-                putExtra("sinopsis", novela.sinopsis)
-                putExtra("esFavorita", novela.esFavorita)
-                putStringArrayListExtra("reseñas", ArrayList(resenas))
-            }
-            startActivityForResult(intent, REQUEST_CODE_DETALLES)
-        }
-
-        mostrarNovelas()
-
-        // Botón para agregar novelas
-        findViewById<Button>(R.id.btnAgregarNovela).setOnClickListener {
-            val intent = Intent(this, AgregarNovelaActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Botón para ir a la pantalla de configuración
-        findViewById<ImageButton>(R.id.btnConfiguracion).setOnClickListener {
-            val intent = Intent(this, ConfiguracionActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Botón para cerrar sesión
-        findViewById<ImageButton>(R.id.btnLogout).setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+        // Cargar el fragmento de lista de novelas al inicio
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ListaNovelasFragment())
+                .commit()
         }
     }
 
-    private fun mostrarNovelas() {
-        val novelas = novelaDbHelper.obtenerNovelas()
-        if (novelas.isNotEmpty()) {
-            adapter.clear()
-            adapter.addAll(novelas)
-            adapter.notifyDataSetChanged()
-        } else {
-            Toast.makeText(this, "No hay novelas disponibles", Toast.LENGTH_SHORT).show()
-        }
+    override fun onNovelaSelected(novela: Novela) {
+        // Mostrar el fragmento de detalles al seleccionar una novela
+        val detallesFragment = DetallesNovelaFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, detallesFragment)
+            .addToBackStack(null)
+            .commit()
+
+        // Pasar los detalles de la novela seleccionada al fragmento de detalles
+        detallesFragment.mostrarDetalles(novela)
     }
 
-    private fun actualizarWidgetFavoritos() {
-        val intent = Intent(this, NovelasFavoritasWidget::class.java)
-        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        val ids = AppWidgetManager.getInstance(application)
-            .getAppWidgetIds(ComponentName(application, NovelasFavoritasWidget::class.java))
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        sendBroadcast(intent)
+    fun mostrarAgregarNovelaFragment() {
+        val agregarFragment = AgregarNovelaFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, agregarFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
-    // Actualizar la lista de novelas si cambia el estado de favorito en DetallesNovelaActivity
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_DETALLES && resultCode == RESULT_OK) {
-            val favoritoActualizado = data?.getBooleanExtra("favorito_actualizado", false) ?: false
-            if (favoritoActualizado) {
-                mostrarNovelas()  // Recarga la lista de novelas
-                actualizarWidgetFavoritos() // Muestra los Widgets
+    fun mostrarAgregarResenaFragment(novela: Novela) {
+        val agregarResenaFragment = AgregarResenaFragment().apply {
+            arguments = Bundle().apply {
+                putString("tituloNovela", novela.titulo)
             }
         }
-    }
-
-    private fun aplicarTema() {
-        val temaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
-        setTheme(if (temaOscuro) R.style.Theme_Feedback4_Night else R.style.Theme_Feedback4_Day)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mostrarNovelas()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, agregarResenaFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

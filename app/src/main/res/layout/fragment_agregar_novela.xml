@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/etTitulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Título"
+        android:minHeight="48dp"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimary"/>
+
+    <EditText
+        android:id="@+id/etAutor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Autor"
+        android:minHeight="48dp"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimary" />
+
+    <EditText
+        android:id="@+id/etAnio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Año de Publicación"
+        android:minHeight="48dp"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimary" />
+
+    <EditText
+        android:id="@+id/etSinopsis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Sinopsis"
+        android:minHeight="48dp"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimary"/>
+
+    <Button
+        android:id="@+id/btnAgregar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar Novela"
+        android:layout_marginTop="16dp"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimaryDark" />
+</LinearLayout>
