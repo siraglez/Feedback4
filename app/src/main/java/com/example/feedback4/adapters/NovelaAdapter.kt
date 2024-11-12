@@ -1,7 +1,6 @@
 package com.example.feedback4.adapters
 
 import android.content.Context
-import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
@@ -33,11 +32,9 @@ class NovelaAdapter(
                 setSpan(UnderlineSpan(), 0, novela.titulo.length, 0)
             }
             tvTitulo.text = spannableTitle
-            tvTitulo.setTextColor(Color.BLACK)
             tvEstrella.visibility = View.VISIBLE
         } else {
             tvTitulo.text = novela?.titulo
-            tvTitulo.setTextColor(Color.BLACK)
             tvEstrella.visibility = View.GONE
         }
 

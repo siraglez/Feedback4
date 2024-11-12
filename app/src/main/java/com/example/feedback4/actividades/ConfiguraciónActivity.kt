@@ -15,6 +15,7 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 
 class ConfiguracionActivity : AppCompatActivity() {
+
     private lateinit var usuarioDbHelper: UsuarioDatabaseHelper
     private lateinit var sharedPreferences: SharedPreferences
 

@@ -1,6 +1,7 @@
 package com.example.feedback4.actividades
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -15,8 +16,14 @@ import com.example.feedback4.fragments.AgregarResenaFragment
 class MainActivity : AppCompatActivity(), ListaNovelasFragment.OnNovelaSelectedListener {
 
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
+    private lateinit var sharedPreferences: SharedPreferences
+    private var temaOscuro: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPreferences = getSharedPreferences("UsuarioPreferences", MODE_PRIVATE)
+        temaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
+        aplicarTema()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -59,5 +66,26 @@ class MainActivity : AppCompatActivity(), ListaNovelasFragment.OnNovelaSelectedL
             .replace(R.id.fragment_container, agregarResenaFragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun aplicarTema() {
+        val temaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
+        setTheme(if (temaOscuro) R.style.Theme_Feedback4_Night else R.style.Theme_Feedback4_Day)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Verificar si el tema ha cambiado al regresar de ConfiguracionActivity
+        val nuevoTemaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
+        if (nuevoTemaOscuro != temaOscuro) {
+            temaOscuro = nuevoTemaOscuro // Actualizar el estado del tema
+            restartActivity() // Reiniciar la actividad solo si el tema cambió
+        }
+    }
+
+    private fun restartActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        finish()
+        startActivity(intent)
     }
 }

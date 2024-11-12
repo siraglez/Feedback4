@@ -1,9 +1,12 @@
 package com.example.feedback4.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
@@ -18,9 +21,14 @@ class DetallesNovelaFragment : Fragment() {
 
     private lateinit var novela: Novela
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
+    private lateinit var resenasAdapter: ArrayAdapter<String>
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = requireContext().getSharedPreferences("UsuarioPreferences", Context.MODE_PRIVATE)
+        aplicarTema()
+
         arguments?.let {
             novela = it.getSerializable("novela") as Novela
         }
@@ -37,6 +45,11 @@ class DetallesNovelaFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvAutor).text = novela.autor
         view.findViewById<TextView>(R.id.tvAnio).text = novela.anioPublicacion.toString()
         view.findViewById<TextView>(R.id.tvSinopsis).text = novela.sinopsis
+
+        // Configuración del ListView de reseñas
+        val listViewResenas = view.findViewById<ListView>(R.id.listViewResenas)
+        resenasAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, obtenerResenas())
+        listViewResenas.adapter = resenasAdapter
 
         view.findViewById<Button>(R.id.btnMarcarFavorita).setOnClickListener {
             novela.esFavorita = !novela.esFavorita
@@ -59,6 +72,23 @@ class DetallesNovelaFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun obtenerResenas(): List<String> {
+        return novelaDbHelper.obtenerResenasPorTitulo(novela.titulo)
+    }
+
+    private fun aplicarTema() {
+        val temaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
+        requireContext().setTheme(if (temaOscuro) R.style.Theme_Feedback4_Night else R.style.Theme_Feedback4_Day)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Actualizar la lista de reseñas cada vez que el fragmento se reanuda
+        resenasAdapter.clear()
+        resenasAdapter.addAll(obtenerResenas())
+        resenasAdapter.notifyDataSetChanged()
     }
 
     companion object {

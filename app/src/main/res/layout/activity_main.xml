@@ -20,5 +20,6 @@
         android:contentDescription="Configuración"
         android:minHeight="48dp"
         android:minWidth="48dp"
-        android:src="@drawable/ic_settings" />
+        android:src="@drawable/ic_settings"
+        android:textColor="@color/textColor"/>
 </FrameLayout>

@@ -1,5 +1,7 @@
 package com.example.feedback4.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +17,13 @@ class AgregarResenaFragment : Fragment() {
 
     private lateinit var tituloNovela: String
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = requireContext().getSharedPreferences("UsuarioPreferences", Context.MODE_PRIVATE)
+        aplicarTema()
+
         arguments?.let {
             tituloNovela = it.getString("tituloNovela", "")
         }
@@ -48,6 +54,11 @@ class AgregarResenaFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun aplicarTema() {
+        val temaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
+        requireContext().setTheme(if (temaOscuro) R.style.Theme_Feedback4_Night else R.style.Theme_Feedback4_Day)
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.example.feedback4.fragments
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ class ListaNovelasFragment : Fragment() {
     private lateinit var listener: OnNovelaSelectedListener
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
     private lateinit var adapter: NovelaAdapter
+    private lateinit var sharedPreferences: SharedPreferences
 
     interface OnNovelaSelectedListener {
         fun onNovelaSelected(novela: Novela)
@@ -26,12 +28,19 @@ class ListaNovelasFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        sharedPreferences = context.getSharedPreferences("UsuarioPreferences", Context.MODE_PRIVATE)
+        aplicarTema(context)
         if (context is OnNovelaSelectedListener) {
             listener = context
             novelaDbHelper = NovelaDatabaseHelper(context)
         } else {
             throw RuntimeException("$context debe implementar OnNovelaSelectedListener")
         }
+    }
+
+    private fun aplicarTema(context: Context) {
+        val temaOscuro = sharedPreferences.getBoolean("temaOscuro", false)
+        context.setTheme(if (temaOscuro) R.style.Theme_Feedback4_Night else R.style.Theme_Feedback4_Day)
     }
 
     override fun onCreateView(
