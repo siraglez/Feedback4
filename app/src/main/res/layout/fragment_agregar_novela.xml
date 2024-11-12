@@ -41,5 +41,15 @@
         android:id="@+id/btnAgregar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Agregar Novela" />
+        android:text="Agregar Novela"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimary"/>
+
+    <Button
+        android:id="@+id/btnVolver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimaryDark"/>
 </LinearLayout>

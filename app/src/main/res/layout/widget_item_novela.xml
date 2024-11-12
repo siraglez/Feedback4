@@ -11,5 +11,5 @@
         android:layout_height="wrap_content"
         android:text="Novela"
         android:textSize="16sp"
-        android:textColor="@android:color/black"/>
+        android:textColor="?android:attr/textColor"/>
 </LinearLayout>

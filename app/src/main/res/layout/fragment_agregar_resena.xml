@@ -19,5 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Agregar Reseña"
+        android:textColor="?android:attr/textColor"
+        android:backgroundTint="?android:attr/colorPrimary"
         android:layout_marginTop="16dp"/>
 </LinearLayout>

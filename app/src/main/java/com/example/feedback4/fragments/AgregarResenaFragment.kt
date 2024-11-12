@@ -13,17 +13,14 @@ import com.example.feedback4.baseDeDatos.NovelaDatabaseHelper
 
 class AgregarResenaFragment : Fragment() {
 
-    private lateinit var novelaTitulo: String
+    private lateinit var tituloNovela: String
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
-            novelaTitulo = it.getString("tituloNovela", "")
+            tituloNovela = it.getString("tituloNovela", "")
         }
-
-        // Inicializamos NovelaDatabaseHelper
         novelaDbHelper = NovelaDatabaseHelper(requireContext())
     }
 
@@ -39,7 +36,12 @@ class AgregarResenaFragment : Fragment() {
         btnAgregarResena.setOnClickListener {
             val resenaTexto = etResena.text.toString()
             if (resenaTexto.isNotBlank()) {
-                agregarResena(novelaTitulo, resenaTexto)
+                if (novelaDbHelper.agregarResena(tituloNovela, resenaTexto)) {
+                    Toast.makeText(requireContext(), "Reseña agregada exitosamente", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.popBackStack()
+                } else {
+                    Toast.makeText(requireContext(), "Error al agregar reseña", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(requireContext(), "La reseña no puede estar vacía", Toast.LENGTH_SHORT).show()
             }
@@ -48,21 +50,11 @@ class AgregarResenaFragment : Fragment() {
         return view
     }
 
-    private fun agregarResena(titulo: String, resena: String) {
-        val exito = novelaDbHelper.agregarResena(titulo, resena)
-        if (exito) {
-            Toast.makeText(requireContext(), "Reseña agregada exitosamente", Toast.LENGTH_SHORT).show()
-            parentFragmentManager.popBackStack() // Regresa al fragmento anterior
-        } else {
-            Toast.makeText(requireContext(), "Error al agregar reseña", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     companion object {
-        fun newInstance(novelaTitulo: String): AgregarResenaFragment {
+        fun newInstance(tituloNovela: String): AgregarResenaFragment {
             val fragment = AgregarResenaFragment()
             val args = Bundle()
-            args.putString("tituloNovela", novelaTitulo)
+            args.putString("tituloNovela", tituloNovela)
             fragment.arguments = args
             return fragment
         }

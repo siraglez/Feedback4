@@ -1,5 +1,6 @@
 package com.example.feedback4.actividades
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
@@ -32,6 +33,7 @@ class ConfiguracionActivity : AppCompatActivity() {
         val btnBackup = findViewById<Button>(R.id.btnBackup)
         val btnRestore = findViewById<Button>(R.id.btnRestore)
         val btnVolver = findViewById<Button>(R.id.btnVolver)
+        val btnCerrarSesion = findViewById<Button>(R.id.btnCerrarSesion)
 
         //Configurar el switch con la preferencia guardada
         val temaOscuroActivado = sharedPreferences.getBoolean("temaOscuro", false)
@@ -58,6 +60,11 @@ class ConfiguracionActivity : AppCompatActivity() {
         // Configurar el botón para volver a la pantalla anterior
         btnVolver.setOnClickListener {
             finish()  // Simplemente termina la actividad para volver a MainActivity
+        }
+
+        //Configurar el botón para cerrar sesión
+        btnCerrarSesion.setOnClickListener {
+            cerrarSesion()
         }
     }
 
@@ -111,5 +118,15 @@ class ConfiguracionActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Error al restaurar los datos: ${e.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun cerrarSesion() {
+        // Borrar las preferecias del usuario para cerrar sesión
+        sharedPreferences.edit().clear().apply()
+        // Redirigir a la pantalla de login
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }

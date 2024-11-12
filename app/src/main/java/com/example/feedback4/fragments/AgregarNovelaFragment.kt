@@ -1,6 +1,5 @@
 package com.example.feedback4.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,22 +14,11 @@ import com.example.feedback4.dataClasses.Novela
 
 class AgregarNovelaFragment : Fragment() {
 
-    private lateinit var listener: OnNovelaAgregadaListener
     private lateinit var novelaDbHelper: NovelaDatabaseHelper
 
-    // Interface para notificar a MainActivity cuando se agrega una novela
-    interface OnNovelaAgregadaListener {
-        fun onNovelaAgregada()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnNovelaAgregadaListener) {
-            listener = context
-            novelaDbHelper = NovelaDatabaseHelper(context)
-        } else {
-            throw RuntimeException("$context must implement OnNovelaAgregadaListener")
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        novelaDbHelper = NovelaDatabaseHelper(requireContext())
     }
 
     override fun onCreateView(
@@ -39,32 +27,33 @@ class AgregarNovelaFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_agregar_novela, container, false)
 
-        val tituloEditText = view.findViewById<EditText>(R.id.etTitulo)
-        val autorEditText = view.findViewById<EditText>(R.id.etAutor)
-        val anioEditText = view.findViewById<EditText>(R.id.etAnio)
-        val sinopsisEditText = view.findViewById<EditText>(R.id.etSinopsis)
+        val etTitulo = view.findViewById<EditText>(R.id.etTitulo)
+        val etAutor = view.findViewById<EditText>(R.id.etAutor)
+        val etAnio = view.findViewById<EditText>(R.id.etAnio)
+        val etSinopsis = view.findViewById<EditText>(R.id.etSinopsis)
+        val btnAgregar = view.findViewById<Button>(R.id.btnAgregar)
+        val btnVolver = view.findViewById<Button>(R.id.btnVolver)
 
-        view.findViewById<Button>(R.id.btnAgregar).setOnClickListener {
-            val titulo = tituloEditText.text.toString()
-            val autor = autorEditText.text.toString()
-            val anio = anioEditText.text.toString().toIntOrNull() ?: 0
-            val sinopsis = sinopsisEditText.text.toString()
+        btnAgregar.setOnClickListener {
+            val titulo = etTitulo.text.toString()
+            val autor = etAutor.text.toString()
+            val anio = etAnio.text.toString().toIntOrNull()
+            val sinopsis = etSinopsis.text.toString()
 
-            if (titulo.isNotBlank() && autor.isNotBlank() && anio > 0) {
-                val novela = Novela(titulo, autor, anio, sinopsis, esFavorita = false)
+            if (titulo.isNotBlank() && autor.isNotBlank() && anio != null && sinopsis.isNotBlank()) {
+                val novela = Novela(titulo, autor, anio, sinopsis)
                 novelaDbHelper.agregarNovela(novela)
                 Toast.makeText(requireContext(), "Novela agregada", Toast.LENGTH_SHORT).show()
-                listener.onNovelaAgregada()
+                requireActivity().supportFragmentManager.popBackStack()
             } else {
-                Toast.makeText(requireContext(), "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
 
-        return view
-    }
+        btnVolver.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
 
-    override fun onDetach() {
-        super.onDetach()
-        novelaDbHelper.close() // Cerrar la base de datos al salir del fragmento
+        return view
     }
 }
