@@ -13,7 +13,7 @@ class NovelasFavoritasWidget : AppWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_novelas_favoritas)
 
-            // Configura el RemoteViewsService para cargar la lista
+            // Configurar el RemoteViewsService para cargar la lista
             val intent = Intent(context, NovelasFavoritasWidgetService::class.java)
             views.setRemoteAdapter(R.id.widget_list, intent)
 

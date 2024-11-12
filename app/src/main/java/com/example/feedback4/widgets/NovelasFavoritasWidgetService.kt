@@ -1,11 +1,14 @@
 package com.example.feedback4.widgets
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.example.feedback4.R
+import com.example.feedback4.actividades.MainActivity
 import com.example.feedback4.baseDeDatos.NovelaDatabaseHelper
+import com.example.feedback4.fragments.DetallesNovelaFragment
 
 class NovelasFavoritasWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -35,6 +38,19 @@ class NovelasFavoritasRemoteViewsFactory(private val context: Context) : RemoteV
     override fun getViewAt(position: Int): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_item_novela)
         views.setTextViewText(R.id.widget_novela_titulo, novelasFavoritas[position])
+
+        //Crear un Intent para abrir la actividad principal y pasar la info al fragmento de detalles
+        val novela = novelasFavoritas[position]
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra("novela", novela)
+        }
+
+        // Crear un PendingIntent para la acción
+        val pendingIntent = PendingIntent.getActivity(context, position, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        // Establecer el PendingIntent en la vista
+        views.setOnClickPendingIntent(R.id.widget_novela_titulo, pendingIntent)
+
         return views
     }
 

@@ -102,25 +102,25 @@ class NovelaDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABAS
 
     // Obtener novelas favoritas
     fun obtenerNovelasFavoritas(): List<Novela> {
-        val novelas = mutableListOf<Novela>()
+        val novelasFavoritas = mutableListOf<Novela>()
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_NOVELAS WHERE esFavorita = 1", null)
 
         if (cursor.moveToFirst()) {
             do {
                 val novela = Novela(
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITULO)),
-                    cursor.getString(cursor.getColumnIndexOrThrow("autor")),
-                    cursor.getInt(cursor.getColumnIndexOrThrow("anioPublicacion")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("sinopsis")),
+                    titulo = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITULO)),
+                    autor = cursor.getString(cursor.getColumnIndexOrThrow("autor")),
+                    anioPublicacion = cursor.getInt(cursor.getColumnIndexOrThrow("anioPublicacion")),
+                    sinopsis = cursor.getString(cursor.getColumnIndexOrThrow("sinopsis")),
                     true
                 )
-                novelas.add(novela)
+                novelasFavoritas.add(novela)
             } while (cursor.moveToNext())
         }
         cursor.close()
         db.close()
-        return novelas
+        return novelasFavoritas
     }
 
     fun agregarResena(titulo: String, resena: String): Boolean {

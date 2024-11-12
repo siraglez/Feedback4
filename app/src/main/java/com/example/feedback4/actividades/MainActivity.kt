@@ -29,6 +29,14 @@ class MainActivity : AppCompatActivity(), ListaNovelasFragment.OnNovelaSelectedL
 
         novelaDbHelper = NovelaDatabaseHelper(this)
 
+        // Verificar si el Intent del widget tiene el objeto novela
+        val novela = intent.getSerializableExtra("novela") as? Novela
+
+        if (novela != null) {
+            // Si hay un título de novela, mostrar el fragmento con los detalles
+            mostrarDetallesNovelaFragment(novela)
+        }
+
         // Cargar el fragmento de lista de novelas al inicio
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -64,6 +72,16 @@ class MainActivity : AppCompatActivity(), ListaNovelasFragment.OnNovelaSelectedL
         val agregarResenaFragment = AgregarResenaFragment.newInstance(novela.titulo)
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, agregarResenaFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    fun mostrarDetallesNovelaFragment(novela: Novela) {
+        val fragment = DetallesNovelaFragment.newInstance(novela)
+
+        // Iniciar una transacción para agregar el fragmento
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
     }
