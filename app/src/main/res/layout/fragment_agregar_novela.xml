@@ -10,46 +10,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Título"
-        android:minHeight="48dp"
-        android:textColor="?android:attr/textColor"
-        android:backgroundTint="?android:attr/colorPrimary"/>
+        android:inputType="text"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/etAutor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:hint="Autor"
-        android:minHeight="48dp"
-        android:textColor="?android:attr/textColor"
-        android:backgroundTint="?android:attr/colorPrimary" />
+        android:inputType="text"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/etAnio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Año de Publicación"
-        android:minHeight="48dp"
-        android:textColor="?android:attr/textColor"
-        android:backgroundTint="?android:attr/colorPrimary" />
+        android:hint="Año de publicación"
+        android:inputType="number"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/etSinopsis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:hint="Sinopsis"
-        android:minHeight="48dp"
-        android:textColor="?android:attr/textColor"
-        android:backgroundTint="?android:attr/colorPrimary"/>
+        android:inputType="textMultiLine"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/btnAgregar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Guardar Novela"
-        android:layout_marginTop="16dp"
-        android:textColor="?android:attr/textColor"
-        android:backgroundTint="?android:attr/colorPrimaryDark" />
+        android:text="Agregar Novela" />
 </LinearLayout>

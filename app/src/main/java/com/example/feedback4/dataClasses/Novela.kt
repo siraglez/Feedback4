@@ -1,5 +1,7 @@
 package com.example.feedback4.dataClasses
 
+import java.io.Serializable
+
 data class Novela(
     val titulo: String,
     val autor: String,
@@ -7,4 +9,4 @@ data class Novela(
     val sinopsis: String,
     var esFavorita: Boolean = false,
     val resenas: MutableList<String> = mutableListOf()
-)
+) : Serializable
